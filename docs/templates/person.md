@@ -6,7 +6,7 @@ role: ""                 # leadership only, e.g. "Lab Manager". Delete the line 
 project: adhd            # RAs: file name of a project in src/content/projects/ (without .md)
 email: ""                # optional; delete the line if not published
 linkedin: ""             # optional, full https:// link; delete the line if none
-photo: "./photos/jane-doe.jpg"   # optional; put the image in src/content/people/photos/. Delete the line if none.
+photo: "./photos/jane-doe.jpg"   # optional; square, ≥ 400×400 px, in src/content/people/photos/ named like this file. Delete the line if none.
 initials: "JD"           # shown when there's no photo; optional
 detail: ""               # alumni only, e.g. "RA 2023–2025 · now PhD student, Example University"
 order: 100               # lower numbers are listed first

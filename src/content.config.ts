@@ -15,8 +15,15 @@ const url = z.string().url();
 /** Optional field that also treats a blank value ("") as "not set", so editors can leave template lines empty. */
 const opt = <T extends z.ZodType>(schema: T) =>
   z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? undefined : v), schema.optional());
-/** A web address, an email link (mailto:), or a file in /public (starting with "/"). */
-const link = z.union([url, z.string().regex(/^mailto:\S+@\S+$/), z.string().regex(/^\/\S+$/)]);
+/** A DOI written as 10.x/…, doi:10.x/…, or http(s)://(dx.)doi.org/10.x/…, normalized to https://doi.org/10.x/…
+ *  (the content lint warns so editors write the full form next time). */
+const doi = z
+  .string()
+  .trim()
+  .regex(/^(?:doi:\s*|https?:\/\/(?:dx\.)?doi\.org\/)?10\.\d{4,9}\/\S+$/i)
+  .transform((v) => "https://doi.org/" + v.replace(/^(?:doi:\s*|https?:\/\/(?:dx\.)?doi\.org\/)/i, ""));
+/** A web address, a DOI, an email link (mailto:), or a file in /public (starting with "/"). */
+const link = z.union([doi, url, z.string().regex(/^mailto:\S+@\S+$/), z.string().regex(/^\/\S+$/)]);
 
 /** Site-wide settings: one file, src/content/site/settings.yaml */
 const site = defineCollection({

@@ -16,7 +16,8 @@ Technical notes for whoever maintains the site (hosting, DNS, dependencies, code
 ```bash
 npm ci            # install exactly what's in the lockfile
 npm run dev       # local preview at http://localhost:4321
-npm run lint      # content naming rules (docs/CONTENT-RULES.md)
+npm run lint      # content rules (docs/CONTENT-RULES.md)
+npm run lint:links  # same, plus checks that web links work (needs internet)
 npm run build     # production build into dist/
 npm run check     # lint + build, the same checks CI runs on every PR
 npm run preview   # serve the built dist/ folder
@@ -96,6 +97,15 @@ nslookup www.cyberpsychlab.com
 nslookup -type=TXT _github-pages-challenge-CyberPsychLab.cyberpsychlab.com
 ```
 
+## PR comment ("Content check")
+
+The **Lint content** job lists the files a PR changes, runs the lint with link checks on those files,
+and posts the report as one comment on the PR. Later pushes edit that same comment. It's only posted
+when there's something to report, and once posted it's kept up to date (it flips to "no problems"
+when everything is fixed). The job has `pull-requests: write` for this and otherwise only
+`contents: read`. Dependabot PRs get a read-only token, so the comment step may fail without failing
+the check. Errors still fail the job after the comment is posted.
+
 ## Updating dependencies
 
 Merge Dependabot PRs once **Build and check content** is green. For Astro major versions, read the
@@ -114,7 +124,10 @@ src/
   content.config.ts      content schemas (rules editors' files must follow)
   content/               all site content (see docs/EDITING.md)
   lib/content.ts         queries: sorting, drafts, reference checks
-scripts/lint-content.mjs naming/organization lint (rules in docs/CONTENT-RULES.md; keep in sync)
+scripts/lint-content.mjs content lint (rules in docs/CONTENT-RULES.md; keep in sync). Thresholds are
+                         constants at the top (PHOTO, POSTER_IMAGE, BIO, LINK_SKIP_HOSTS); uses sharp
+                         to read image sizes. CI flags: --changed, --links, --report.
+scripts/pr-comment.mjs   posts/updates the single "Content check" PR comment from the lint report
   layouts/Base.astro     page shell: head/meta, header, nav, footer
   components/            ProjectCard, PubItem, Avatar, NetworkBanner
   pages/                 one file per page (/, /about, /projects, /publications, /posters, /people, /join, 404)

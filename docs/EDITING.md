@@ -30,9 +30,12 @@ still builds, and opens a pull request for review. Read its summary of what it c
 4. Wait about a minute for the two checks at the bottom of the pull request, **Lint content** and
    **Build and check content**:
    - ✅ Both green: you're done. A maintainer will review and merge it.
-   - ❌ Red: click **Details**, or open the **Files changed** tab, where problems are flagged on the
-     exact line. Each message says what to rename or fix (for example "rename to jane-doe.md").
-     Fix the file on the same branch and the checks run again.
+   - ❌ Red: something must be fixed before merging.
+   - Either way, read the **"Content check" comment** the check posts on the pull request. It lists
+     every problem in the files you changed, and what to do (for example "rename to jane-doe.md").
+     ⚠️ **Warnings** don't block merging, but whoever reviews will ask about them, so fix them or
+     reply to the comment explaining why they're fine. Fix files on the same branch; the checks
+     and the comment update automatically.
 
 ## What goes where
 
@@ -41,7 +44,7 @@ still builds, and opens a pull request for review. Read its summary of what it c
 | Change the home page text, About page, contact emails, or "Join the Lab" lists | `src/content/site/settings.yaml` |
 | Add or change a research group | `src/content/projects/` (one file per project) |
 | Add, update, or move a person | `src/content/people/` (one file per person) |
-| Add a headshot | upload to `src/content/people/photos/` named like the person's file (`jane-doe.jpg`), then add `photo: "./photos/jane-doe.jpg"` |
+| Add a headshot | crop it **square** (at least 400 × 400 px), upload to `src/content/people/photos/` named like the person's file (`jane-doe.jpg`), then add `photo: "./photos/jane-doe.jpg"` |
 | Add a paper | `src/content/publications/` |
 | Add a poster | `src/content/posters/` |
 | Upload a PDF | `public/files/papers/` or `public/files/posters/`, named like its entry, then link it as `/files/papers/2025-short-title.pdf` |
@@ -54,6 +57,7 @@ File names follow a few simple rules (full list: [CONTENT-RULES.md](CONTENT-RULE
 - **people** are named after the person: `jane-doe.md`, and their photo is `photos/jane-doe.jpg`
 - **papers and posters** start with the year: `2025-digital-hoarding-scale.md`
 - **a PDF or image** has the same name as the entry it belongs to: `2025-digital-hoarding-scale.pdf`
+- **headshots** are **square** and at least **400 × 400 px** (800 × 800 is better)
 - **images** under 2 MB, **PDFs** under 20 MB
 
 Don't worry about memorizing these. The **Lint content** check tells you exactly what to rename.
@@ -65,5 +69,8 @@ Don't worry about memorizing these. The **Lint content** check tells you exactly
 - **Quotes:** put text in double quotes, like `title: "My Title"`. If the text itself contains a
   double quote, use single quotes around it instead.
 - **Lists** are lines starting with two spaces, a dash, and a space: `  - "Item"`.
-- **Bios** go below the second `---` line. Leave a blank line between paragraphs.
+- **Bios** go below the second `---` line. Leave a blank line between paragraphs. RA bios: 3–5 sentences.
+- **No HTML.** Use Markdown: `**bold**`, `*italic*`, `[link text](https://…)`.
+- **Survey links:** in Google Forms use **Send** → link icon, not the address of the page where you edit the form.
+- **DOIs:** write them as `https://doi.org/10.…`.
 - **Only publish** emails, LinkedIn profiles, and photos that the person agreed to share.
