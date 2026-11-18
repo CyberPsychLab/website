@@ -7,9 +7,9 @@ img{max-width:100%}
 :root{
   --bg:#ffffff; --surface:#f3f6fa; --fg:#14213a; --muted:#56637a; --line:#d9e1ec;
   --navy:#0b2a55; --cu:#1d4f91; --cu-light:#b9d9eb; --accent:#2a7f9e; --on-navy:#ffffff;
-  --display:"Newsreader", Georgia, "Times New Roman", serif;
-  --body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --display:var(--font-newsreader);
+  --body:var(--font-public-sans);
+  --mono:var(--font-plex-mono);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0e1522; --surface:#152033; --fg:#e6ecf5; --muted:#9aa8bf; --line:#26344c;

@@ -1,6 +1,6 @@
 ---
 import { getEntry } from "astro:content";
-import { Image } from "astro:assets";
+import { Font, Image } from "astro:assets";
 import "../styles/global.css";
 
 interface Props {
@@ -41,9 +41,9 @@ const path = Astro.url.pathname.replace(/\/?$/, "/");
   <meta property="og:description" content={desc}>
   <meta property="og:url" content={canonical}>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <Font cssVariable="--font-public-sans" preload />
+  <Font cssVariable="--font-newsreader" />
+  <Font cssVariable="--font-plex-mono" />
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
