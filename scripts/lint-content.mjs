@@ -13,6 +13,7 @@
 import { readFileSync, readdirSync, statSync, existsSync, appendFileSync } from "node:fs";
 import { join, relative, extname, basename, dirname, posix } from "node:path";
 import { parse as parseYaml } from "yaml";
+import sharp from "sharp";
 
 const ROOT = process.cwd();
 const CONTENT = "src/content";
@@ -20,6 +21,15 @@ const PUBLIC_FILES = "public/files";
 const MB = 1024 * 1024;
 const LIMITS = { image: 2 * MB, pdf: 20 * MB };
 const IMAGE_EXT = [".jpg", ".jpeg", ".png", ".webp"];
+
+/** Headshots in src/content/people/photos/. The site shows them as squares (180 px for
+ *  leadership, 96 px for RAs, doubled on high-resolution screens). */
+const PHOTO_DIR = `${CONTENT}/people/photos`;
+const PHOTO = {
+  minSide: 400,          // error below this (needed for sharp display at 180 px × 2)
+  recommendedSide: 800,  // warning below this
+  maxAspectDiff: 0.05,   // error if width/height is off square by more than 5%
+};
 
 /** Folder → what may live there. Anything not listed here is an "unexpected file". */
 const FOLDERS = {
@@ -34,6 +44,8 @@ const FOLDERS = {
   [`${PUBLIC_FILES}/posters`]: { ext: [".pdf"] },
 };
 const IGNORED = new Set([".gitkeep", ".DS_Store", "Thumbs.db"]);
+/** Instructions files allowed inside upload folders (shown when browsing the folder on GitHub). */
+const FOLDER_README = "README.md";
 
 const KEBAB = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const PLACEHOLDER = /\b(example entry|example bio|example ra|example alum|add a short bio|replace (this|with)|lorem ipsum|jane doe|full paper title|poster title|project name)\b/i;
@@ -84,6 +96,7 @@ const lineOf = (text, field) => {
 const allFiles = [...walk(join(ROOT, CONTENT)), ...walk(join(ROOT, PUBLIC_FILES))];
 const entries = { projects: new Map(), people: new Map(), publications: new Map(), posters: new Map() };
 const uploads = new Map(); // rel path → referenced?
+const photos = []; // headshots to measure
 
 for (const { abs, path, isDir } of allFiles) {
   if (isDir) {
@@ -93,6 +106,7 @@ for (const { abs, path, isDir } of allFiles) {
   }
   const name = posix.basename(path);
   if (IGNORED.has(name)) continue;
+  if (name === FOLDER_README && path !== `${CONTENT}/${FOLDER_README}` && FOLDERS[posix.dirname(path)]?.ext?.every((x) => x !== ".md")) continue;
   const dir = posix.dirname(path);
   const ext = extname(name);
   const stem = name.slice(0, name.length - ext.length);
@@ -119,6 +133,7 @@ for (const { abs, path, isDir } of allFiles) {
   const kind = ext.toLowerCase() === ".pdf" ? "pdf" : IMAGE_EXT.includes(ext.toLowerCase()) ? "image" : null;
   if (kind) {
     uploads.set(path, false);
+    if (kind === "image" && dir === PHOTO_DIR) photos.push({ abs, path });
     if (size > LIMITS[kind])
       error("S1", path, `${(size / MB).toFixed(1)} MB is over the ${LIMITS[kind] / MB} MB limit for ${kind === "pdf" ? "PDFs" : "images"}. ` +
         (kind === "image" ? "Resize it to about 1200 px wide, or export as JPG at ~80% quality." : "Compress it (e.g. File → Reduce File Size / an online PDF compressor)."));
@@ -237,6 +252,34 @@ if (existsSync(join(ROOT, settingsPath))) {
   } catch (e) {
     error("F1", settingsPath, `Couldn't read settings.yaml: ${String(e.message).split("\n")[0]}`);
   }
+}
+
+/* ---------------- rule P1/P2: headshot dimensions and shape ---------------- */
+
+for (const { abs, path } of photos) {
+  let meta;
+  try {
+    meta = await sharp(abs).metadata();
+  } catch {
+    error("P1", path, "Couldn't open this image. It may be damaged or not really a JPG/PNG/WebP. Re-export it and upload again.");
+    continue;
+  }
+  // Phones store portrait photos sideways plus a rotation flag (EXIF orientation 5–8): measure as displayed.
+  const turned = (meta.orientation ?? 1) >= 5;
+  const w = turned ? meta.height : meta.width, h = turned ? meta.width : meta.height;
+  if (!w || !h) { error("P1", path, "Couldn't read this image's size. Re-export it and upload again."); continue; }
+  const size = `${w}×${h} px`;
+  const ratio = w / h;
+  if (Math.abs(ratio - 1) > PHOTO.maxAspectDiff) {
+    const side = Math.min(w, h);
+    error("P1", path, `Headshots must be square; this one is ${size} (${w > h ? "wider than tall" : "taller than wide"}). ` +
+      `Crop it to a square around the face (e.g. ${side}×${side} px) using the "Square" crop in your phone's photo editor or any image editor.`);
+  }
+  const short = Math.min(w, h);
+  if (short < PHOTO.minSide)
+    error("P2", path, `Too small: ${size}. Headshots need to be at least ${PHOTO.minSide}×${PHOTO.minSide} px (ideally ${PHOTO.recommendedSide}×${PHOTO.recommendedSide}). Ask for a larger original.`);
+  else if (short < PHOTO.recommendedSide)
+    warn("P2", path, `${size} is OK but will look soft on high-resolution screens. ${PHOTO.recommendedSide}×${PHOTO.recommendedSide} px or larger is recommended.`);
 }
 
 // Orphaned uploads

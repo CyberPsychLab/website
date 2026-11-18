@@ -41,7 +41,7 @@ still builds, and opens a pull request for review. Read its summary of what it c
 | Change the home page text, About page, contact emails, or "Join the Lab" lists | `src/content/site/settings.yaml` |
 | Add or change a research group | `src/content/projects/` (one file per project) |
 | Add, update, or move a person | `src/content/people/` (one file per person) |
-| Add a headshot | upload to `src/content/people/photos/` named like the person's file (`jane-doe.jpg`), then add `photo: "./photos/jane-doe.jpg"` |
+| Add a headshot | crop it **square** (at least 400 × 400 px), upload to `src/content/people/photos/` named like the person's file (`jane-doe.jpg`), then add `photo: "./photos/jane-doe.jpg"` |
 | Add a paper | `src/content/publications/` |
 | Add a poster | `src/content/posters/` |
 | Upload a PDF | `public/files/papers/` or `public/files/posters/`, named like its entry, then link it as `/files/papers/2025-short-title.pdf` |
@@ -54,6 +54,7 @@ File names follow a few simple rules (full list: [CONTENT-RULES.md](CONTENT-RULE
 - **people** are named after the person: `jane-doe.md`, and their photo is `photos/jane-doe.jpg`
 - **papers and posters** start with the year: `2025-digital-hoarding-scale.md`
 - **a PDF or image** has the same name as the entry it belongs to: `2025-digital-hoarding-scale.pdf`
+- **headshots** are **square** and at least **400 × 400 px** (800 × 800 is better)
 - **images** under 2 MB, **PDFs** under 20 MB
 
 Don't worry about memorizing these. The **Lint content** check tells you exactly what to rename.

@@ -14,7 +14,7 @@ Every message says what to rename or change. The rule code (e.g. `N4`) links bac
 | What | Name it | Example |
 |---|---|---|
 | Person | `src/content/people/<first>-<last>.md` | `people/jane-doe.md` |
-| Their headshot | `src/content/people/photos/<same name>.<jpg/png/webp>` | `people/photos/jane-doe.jpg` |
+| Their headshot | `src/content/people/photos/<same name>.<jpg/png/webp>`, **square**, ≥ 400 px | `people/photos/jane-doe.jpg` |
 | Project | `src/content/projects/<short-id>.md` | `projects/autistic-traits.md` |
 | Publication | `src/content/publications/<year>-<short-title>.md` | `publications/2025-digital-hoarding-scale.md` |
 | Its PDF | `public/files/papers/<same name>.pdf` | `files/papers/2025-digital-hoarding-scale.pdf` |
@@ -31,7 +31,8 @@ capitals, underscores, or accents, and the extension is lowercase too (`.jpg`, n
 **N2: Files go in the right folder, with the right type.**
 `.md` files in `people/`, `projects/`, `publications/`, `posters/`. Images (`.jpg .jpeg .png .webp`)
 in `people/photos/` and `posters/images/`. PDFs in `public/files/papers/` and `public/files/posters/`.
-`src/content/site/` holds only `settings.yaml`. No other folders. Word documents can't be used
+`src/content/site/` holds only `settings.yaml`. Upload folders may also contain a `README.md` with
+instructions. No other folders. Word documents can't be used
 directly: copy the text into the `.md` file.
 
 **N3: Project ids are 2–30 characters.** The file name is the id other files use (`project: adhd`),
@@ -54,6 +55,14 @@ point at a file that's actually in `public/files/`.
 
 **S1: Size limits.** Images up to **2 MB** (about 1200 px wide is plenty; the site resizes them
 automatically). PDFs up to **20 MB**.
+
+**P1: Headshots are square.** Width and height within 5% of each other. The site shows every
+headshot as a square, so anything else gets its edges cut off. Use the "Square" crop in your phone's
+photo editor (or any image editor) and keep the face centered. Phone photos are measured the way
+they're displayed, so a portrait photo counts as taller than wide.
+
+**P2: Headshots are big enough.** At least **400 × 400 px** (error below that). **800 × 800 px** or
+more is recommended (warning below that), so photos stay sharp on high-resolution screens.
 
 **F1: The file must be readable.** Usually a missing closing quote, a stray colon in unquoted text,
 or a list item that isn't indented by two spaces.

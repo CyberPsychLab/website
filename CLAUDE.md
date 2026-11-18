@@ -58,7 +58,10 @@ allowed values) is in `src/content.config.ts`, which is the source of truth when
   with a special character. Lists are lines starting with `  - `.
 - Bios and descriptions below the front matter are Markdown: blank line between paragraphs,
   `[link text](https://…)` for links.
-- Images: JPG/PNG/WebP, ideally square for headshots, under ~2 MB. Astro resizes them automatically.
+- Images: JPG/PNG/WebP under 2 MB. Astro resizes them automatically.
+- **Headshots must be square (±5%) and at least 400×400 px** (800×800 recommended). If someone gives you a
+  non-square or small photo, don't upload it as-is: tell them it needs cropping or a larger original
+  (you may crop it square around the face yourself only if they ask you to).
 
 ## For maintainers
 

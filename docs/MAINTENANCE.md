@@ -114,7 +114,8 @@ src/
   content.config.ts      content schemas (rules editors' files must follow)
   content/               all site content (see docs/EDITING.md)
   lib/content.ts         queries: sorting, drafts, reference checks
-scripts/lint-content.mjs naming/organization lint (rules in docs/CONTENT-RULES.md; keep in sync)
+scripts/lint-content.mjs naming/organization/photo lint (rules in docs/CONTENT-RULES.md; keep in sync;
+                         headshot thresholds are the PHOTO constant; uses sharp to read image sizes)
   layouts/Base.astro     page shell: head/meta, header, nav, footer
   components/            ProjectCard, PubItem, Avatar, NetworkBanner
   pages/                 one file per page (/, /about, /projects, /publications, /posters, /people, /join, 404)
