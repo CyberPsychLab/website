@@ -31,13 +31,31 @@ npm run preview   # serve the built dist/ folder
 3. **Verify the domain for the org:** Org settings → Pages → **Add a domain** → `cyberpsychlab.com`, then
    add the TXT record GitHub shows (see DNS below). This stops other GitHub accounts from claiming
    the domain or its subdomains. Keep the TXT record in place permanently.
-4. **Protect `main`** (a ruleset or branch protection):
-   - Require a pull request before merging, with 1 approval and review from Code Owners
+4. **Protect `main`** with the repository ruleset **Protect main** (Settings → Rules → Rulesets):
+   - Require a pull request before merging, with 1 approval and review from Code Owners (squash merge only)
    - Require the status checks **Lint content** and **Build and check content** to pass
    - Block force pushes and deletions
-5. **Editors:** add lab members to the org with *Read* access to the repo (or *Triage*). They can
-   still propose changes: GitHub forks the repo or makes a branch for them and opens a PR. Give
-   *Write* access to people who should be able to create branches directly (smoother for AI tools).
+   - **Bypass list: Organization admin (org owners) only, mode "Always".** The maintainer is the only
+     org owner, so only they can push or force-push to `main` directly or merge without approval.
+     Everyone else goes through approved PRs. **Don't make anyone else an org owner** unless they
+     should have that same power. Lab leads manage the Editors team as team maintainers instead.
+5. **People and teams:**
+
+   | Team | Who | Repo access | Can approve | Extra |
+   |---|---|---|---|---|
+   | `@CyberPsychLab/lab-leads` | PI / lab leadership | Write | content PRs | Team **maintainer** of `editors`, so they can add and remove editors |
+   | `@CyberPsychLab/editors` | lab members who edit content | Write | content PRs | — |
+   | `@AMoo-Miki` (only org owner) | site maintainer | Admin | everything | Only person who can bypass the ruleset: push/force-push to `main`, merge without approval |
+
+   - Approval rules live in `.github/CODEOWNERS`. `src/content/` and `public/files/` can be approved
+     by either team. Everything else (code, config, workflows, docs) needs the maintainer.
+   - Someone can't approve their own PR, so an editor's change needs another editor, a lab lead, or
+     the maintainer.
+   - Write access lets editors push branches (needed by AI tools), but the `Protect main` ruleset
+     still forces every change through a reviewed PR with passing checks.
+   - **Adding an editor:** the person needs a GitHub account and must be an org member. An owner
+     invites them to the org (People → Invite member); a lab lead or owner then adds them to `editors`.
+   - Org member privileges: members can't create repositories or teams.
 6. **Dependabot** is configured in `.github/dependabot.yml`. It opens weekly PRs for npm updates
    (grouped, after a 7-day cooldown) and monthly PRs for GitHub Actions.
 

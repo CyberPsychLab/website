@@ -1,2 +1,10 @@
-# Every change needs approval from a code owner before it can be merged.
-* @AMoo-Miki
+# Who must approve changes before they can be merged into main.
+# The last matching line wins.
+
+# Everything technical (code, config, workflows, docs) needs the site maintainer.
+*                    @AMoo-Miki
+
+# Site content can be approved by any editor or lab lead (or the maintainer).
+# A pull request author can't approve their own pull request; someone else on these teams does.
+/src/content/        @CyberPsychLab/editors @CyberPsychLab/lab-leads @AMoo-Miki
+/public/files/       @CyberPsychLab/editors @CyberPsychLab/lab-leads @AMoo-Miki
