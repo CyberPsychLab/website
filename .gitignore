@@ -7,3 +7,6 @@ Thumbs.db
 .claude/settings.local.json
 .idea/
 *.iml
+lint-report.md
+lint-report.md.json
+changed-files.txt

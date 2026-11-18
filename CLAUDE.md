@@ -54,6 +54,14 @@ allowed values) is in `src/content.config.ts`, which is the source of truth when
 
 ## Formatting notes
 
+- **No HTML, ever** (rule H1): no tags, no `javascript:`/`data:` links. Markdown only. If someone
+  pastes formatted text containing HTML, convert it to Markdown.
+- **Survey links** must be the participant link (`forms.gle/…` or `…/forms/d/e/…/viewform`), never a
+  Google Forms `/edit` link (rule U1).
+- **DOIs** go in `link:` as `https://doi.org/10.…`.
+- After `npm run check`, also run `npm run lint:links` and fix or mention any broken links in files
+  you touched. The PR gets a "Content check" comment listing warnings; address each one (fix it or
+  explain in the PR) instead of leaving it for the reviewer.
 - Front matter is YAML. Wrap text in double quotes, especially if it contains `:` or `#` or starts
   with a special character. Lists are lines starting with `  - `.
 - Bios and descriptions below the front matter are Markdown: blank line between paragraphs,

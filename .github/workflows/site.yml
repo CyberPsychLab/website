@@ -22,15 +22,45 @@ jobs:
   lint:
     name: Lint content
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # to post/update the "Content check" comment on the PR
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # needed to list the files this PR changes
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - name: Check file names and content rules (docs/CONTENT-RULES.md)
-        run: npm run lint
+
+      - name: List files changed by this pull request
+        if: github.event_name == 'pull_request'
+        run: git diff --name-only --diff-filter=ACMR "origin/${{ github.base_ref }}...HEAD" | tee changed-files.txt
+
+      - name: Check content rules (docs/CONTENT-RULES.md)
+        id: lint
+        continue-on-error: true # report first, fail the job at the end
+        env:
+          LINT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: >-
+          node scripts/lint-content.mjs --report lint-report.md
+          ${{ github.event_name == 'pull_request' && '--changed changed-files.txt --links' || '' }}
+
+      - name: Post results as a PR comment
+        if: always() && github.event_name == 'pull_request'
+        continue-on-error: true # e.g. Dependabot PRs get a read-only token
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: node scripts/pr-comment.mjs lint-report.md
+
+      - name: Fail if there are errors
+        if: steps.lint.outcome == 'failure'
+        run: |
+          echo "::error::Content lint found errors. See the table above or the comment on the pull request."
+          exit 1
 
   build:
     name: Build and check content

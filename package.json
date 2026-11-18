@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "lint": "node scripts/lint-content.mjs",
+    "lint:links": "node scripts/lint-content.mjs --links",
     "check": "npm run lint && astro build",
     "build": "astro build",
     "preview": "astro preview"
