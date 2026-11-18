@@ -1,0 +1,62 @@
+# Site-wide settings for cyberpsychlab.com
+# Text in quotes can be changed freely. Keep the field names (before the colon) as they are.
+
+labName: "CyberPsych Lab"
+university: "Columbia University"
+universityUrl: "https://www.columbia.edu/"
+department: "Department of Psychology"
+
+# Home page banner
+slogan: "From the screen to the self."
+headline: "Research in clinical psychology and personality"
+intro: "The CyberPsych Lab uses technology to support every stage of its research. Recent projects include obsessive-compulsive and related disorders, autistic traits, and digital hoarding."
+homeProjectCount: 3   # how many projects to show on the home page
+
+# Contacts (used on the About and Join pages)
+piName: "Dr. Usha Barahmand"
+piEmail: "ub2142@columbia.edu"
+labManagerName: "Albaraa Gebril"
+labManagerEmail: "amg2451@columbia.edu"
+applicationSubject: "CyberPsych Lab RA Application – Your Name"
+
+# About page paragraphs (each "- " line is one paragraph)
+about:
+  - "The CyberPsych Lab, led by Dr. Usha Barahmand in Columbia's Department of Psychology, works on projects in clinical psychology and personality. Technology supports every stage of how we run our research."
+  - "Our current work is organized into research groups covering topics such as borderline personality disorder, trauma, ADHD, autistic traits, and matrescence. See Current Projects for the full list."
+  - "Research assistants collaborate on data collection, gain experience working with databases and running the appropriate statistical analyses, and help write papers for publication."
+
+recentlyCompleted:
+  - "Obsessive-compulsive and related disorders"
+  - "Premenstrual dysphoric disorder"
+  - "Autistic traits"
+  - "Digital hoarding"
+
+# Join the Lab page
+applicationChecklist:
+  - "Your name, school, year, and major"
+  - "The research groups you are interested in"
+  - "Any relevant coursework or research experience"
+  - "How many hours per week you can commit"
+  - "Your CV or résumé, attached"
+
+raDuties:
+  - "Collaborate on collecting data for your group's study"
+  - "Gain experience working with research databases"
+  - "Run the appropriate statistical analyses"
+  - "Help write a paper for publication"
+  - "Attend weekly lab meetings on Zoom and contribute to discussions about your research"
+
+# Footer
+social:
+  - label: "Instagram · @cyberpsychlab"
+    url: "https://www.instagram.com/cyberpsychlab/"
+    image: "../../assets/instagram-avatar.png"
+
+copyright: "© {year} Columbia University"   # {year} is filled in automatically
+footerLegal:
+  - label: "Accessibility"
+    url: "https://accessibility.columbia.edu"
+  - label: "Nondiscrimination"
+    url: "https://universitypolicies.columbia.edu/content/notice-nondiscrimination"
+  - label: "Copyright"
+    url: "https://www.columbia.edu/content/copyright"

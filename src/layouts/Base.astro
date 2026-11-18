@@ -1,0 +1,102 @@
+---
+import { getEntry } from "astro:content";
+import { Image } from "astro:assets";
+import "../styles/global.css";
+
+interface Props {
+  /** Page title shown in the browser tab; omit on the home page. */
+  title?: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+const site = (await getEntry("site", "settings"))!.data;
+const fullTitle = title ? `${title} · ${site.labName}` : `${site.labName} · ${site.university}`;
+const desc = description ?? `${site.slogan} ${site.intro}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const year = new Date().getFullYear();
+
+const nav = [
+  ["/", "Home"],
+  ["/about/", "About"],
+  ["/projects/", "Current Projects"],
+  ["/publications/", "Publications"],
+  ["/posters/", "Posters"],
+  ["/people/", "People"],
+  ["/join/", "Join the Lab"],
+];
+const path = Astro.url.pathname.replace(/\/?$/, "/");
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>{fullTitle}</title>
+  <meta name="description" content={desc}>
+  <meta name="theme-color" content="#0b2a55">
+  <link rel="canonical" href={canonical}>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content={site.labName}>
+  <meta property="og:title" content={fullTitle}>
+  <meta property="og:description" content={desc}>
+  <meta property="og:url" content={canonical}>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="cubar"><div class="wrap">
+  <a href={site.universityUrl} target="_blank" rel="noopener">{site.university} in the City of New York</a>
+  <span>{site.department}</span>
+</div></div>
+
+<header class="mast"><div class="wrap">
+  <a class="logo" href="/" aria-label={`${site.labName} home`}>
+    <span class="lockup" aria-hidden="true">
+      <span class="w-cyber">cyber</span>
+      <svg class="brain" viewBox="-5 4 140 108"><rect class="p1" x="24" y="18" width="10" height="10"/><rect class="p1" x="36" y="18" width="10" height="10"/><rect class="p1" x="48" y="18" width="10" height="10"/><rect class="p2" x="60" y="18" width="10" height="10"/><rect class="p1" x="96" y="18" width="10" height="10"/><rect class="p1" x="12" y="30" width="10" height="10"/><rect class="p2" x="24" y="30" width="10" height="10"/><rect class="p1" x="36" y="30" width="10" height="10"/><rect class="p1" x="48" y="30" width="10" height="10"/><rect class="p1" x="60" y="30" width="10" height="10"/><rect class="p1" x="96" y="30" width="10" height="10"/><rect class="p1" x="108" y="30" width="10" height="10"/><rect class="p1" x="0" y="42" width="10" height="10"/><rect class="p1" x="12" y="42" width="10" height="10"/><rect class="p1" x="24" y="42" width="10" height="10"/><rect class="p1" x="36" y="42" width="10" height="10"/><rect class="p2" x="48" y="42" width="10" height="10"/><rect class="p1" x="84" y="42" width="10" height="10"/><rect class="p1" x="96" y="42" width="10" height="10"/><rect class="p2" x="108" y="42" width="10" height="10"/><rect class="p1" x="120" y="42" width="10" height="10"/><rect class="p1" x="0" y="54" width="10" height="10"/><rect class="p2" x="12" y="54" width="10" height="10"/><rect class="p1" x="24" y="54" width="10" height="10"/><rect class="p1" x="36" y="54" width="10" height="10"/><rect class="p2" x="72" y="54" width="10" height="10"/><rect class="p1" x="84" y="54" width="10" height="10"/><rect class="p1" x="96" y="54" width="10" height="10"/><rect class="p1" x="108" y="54" width="10" height="10"/><rect class="p1" x="120" y="54" width="10" height="10"/><rect class="p1" x="12" y="66" width="10" height="10"/><rect class="p1" x="24" y="66" width="10" height="10"/><rect class="p2" x="36" y="66" width="10" height="10"/><rect class="p1" x="72" y="66" width="10" height="10"/><rect class="p1" x="84" y="66" width="10" height="10"/><rect class="p2" x="96" y="66" width="10" height="10"/><rect class="p1" x="108" y="66" width="10" height="10"/><rect class="p1" x="24" y="78" width="10" height="10"/><rect class="p2" x="60" y="78" width="10" height="10"/><rect class="p1" x="72" y="78" width="10" height="10"/><rect class="p1" x="84" y="78" width="10" height="10"/><rect class="p1" x="96" y="78" width="10" height="10"/><rect class="p1" x="84" y="90" width="10" height="10"/></svg>
+      <span class="w-psych">psych</span>
+    </span>
+    <span class="subline" aria-hidden="true"><i class="sq1"></i>Lab · {site.university}<i class="sq2"></i></span>
+  </a>
+  <nav aria-label="Main"><ul>
+    {nav.map(([href, label]) => (
+      <li><a href={href} aria-current={path === href ? "page" : undefined}>{label}</a></li>
+    ))}
+  </ul></nav>
+</div></header>
+
+<main class="wrap" id="main">
+  <slot />
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <h4>{site.labName}</h4>
+      <p>{site.department}, {site.university}</p>
+    </div>
+    {site.social.length > 0 && (
+      <div>
+        <h4>Follow Us</h4>
+        <div class="social">
+          {site.social.map((s) => (
+            <a href={s.url} target="_blank" rel="noopener">
+              {s.image && <Image class="avatar" src={s.image} alt="" width={40} height={40} />}
+              {s.label}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+  <div class="legal"><div class="wrap">
+    <span>{site.copyright.replace("{year}", String(year))}</span>
+    {site.footerLegal.map((l) => <a href={l.url} target="_blank" rel="noopener">{l.label}</a>)}
+  </div></div>
+</footer>
+</body>
+</html>

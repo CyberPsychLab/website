@@ -1,0 +1,21 @@
+---
+import type { CollectionEntry } from "astro:content";
+interface Props { pub: CollectionEntry<"publications"> }
+const { pub } = Astro.props;
+const p = pub.data;
+const ext = (u: string) => (/^https?:/i.test(u) ? { target: "_blank", rel: "noopener" } : {});
+---
+<li class="pub" data-status={p.status}>
+  <span class="yr">{p.year}</span>
+  <div>
+    <h3>{p.link ? <a href={p.link} {...ext(p.link)} style="color:inherit">{p.title}</a> : p.title}</h3>
+    <div class="auth">{p.authors}</div>
+    <div class="venue">{p.venue}</div>
+    {(p.link || p.pdf) && (
+      <div class="links">
+        {p.link && <a href={p.link} {...ext(p.link)}>View</a>}
+        {p.pdf && <a href={p.pdf} target="_blank" rel="noopener">PDF</a>}
+      </div>
+    )}
+  </div>
+</li>

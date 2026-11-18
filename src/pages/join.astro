@@ -1,0 +1,58 @@
+---
+import Base from "../layouts/Base.astro";
+import { getSite } from "../lib/content";
+const site = await getSite();
+const subject = encodeURIComponent(site.applicationSubject);
+const contacts = [
+  { id: "mail-lm", role: "Lab Manager", name: site.labManagerName, email: site.labManagerEmail },
+  { id: "mail-pi", role: "Principal Investigator", name: site.piName, email: site.piEmail },
+];
+---
+<Base title="Join the Lab" description="How to apply to become a research assistant in the CyberPsych Lab.">
+  <section class="page">
+    <div class="pagehead"><span class="eyebrow">Applications</span><h1>Join the Lab</h1>
+      <p>We welcome students who want hands-on research experience in clinical psychology and personality.</p></div>
+    <div class="join">
+      <ol class="steps">
+        <li><div><h3>Look through our research groups</h3><p>Browse <a href="/projects/">Current Projects</a> and pick one or two groups that interest you.</p></div></li>
+        <li><div><h3>Email the lab manager or PI</h3><p>Include the following in your email:</p>
+          <ul>{site.applicationChecklist.map((x) => <li>{x}</li>)}</ul></div></li>
+        <li><div><h3>Hear back from us</h3><p>The lab manager will follow up about open positions and next steps.</p></div></li>
+      </ol>
+      <div class="contacts">
+        {contacts.map((c) => (
+          <div class="contact"><span class="role">{c.role}</span><h3>{c.name}</h3>
+            <div class="addr">
+              <code id={c.id}>{c.email}</code>
+              <button type="button" class="copy" data-copy={c.id}>Copy</button>
+              <a class="copy" href={`mailto:${c.email}?subject=${subject}`} style="text-decoration:none">Email</a>
+            </div>
+          </div>
+        ))}
+        <div class="subject"><strong>Suggested subject line</strong>
+          <code id="subj" style="font-family:var(--mono)">{site.applicationSubject}</code>
+          <button type="button" class="copy" data-copy="subj" style="justify-self:start">Copy</button>
+        </div>
+      </div>
+    </div>
+    {site.raDuties.length > 0 && (
+      <div>
+        <h2 class="sec">What research assistants do</h2>
+        <ul class="methods" style="margin-top:20px;max-width:66ch">{site.raDuties.map((x) => <li>{x}</li>)}</ul>
+      </div>
+    )}
+  </section>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((b) => b.addEventListener("click", () => {
+    const el = document.getElementById(b.dataset.copy!);
+    if (!el) return;
+    const flash = (msg: string) => { b.textContent = msg; setTimeout(() => (b.textContent = "Copy"), 1500); };
+    const select = () => {
+      const r = document.createRange(); r.selectNodeContents(el);
+      const s = getSelection(); s?.removeAllRanges(); s?.addRange(r); flash("Selected");
+    };
+    try { navigator.clipboard.writeText(el.textContent ?? "").then(() => flash("Copied"), select); } catch { select(); }
+  }));
+</script>

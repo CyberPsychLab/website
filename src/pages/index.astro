@@ -1,0 +1,47 @@
+---
+import Base from "../layouts/Base.astro";
+import NetworkBanner from "../components/NetworkBanner.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import PubItem from "../components/PubItem.astro";
+import { getSite, getProjects, getPublications } from "../lib/content";
+
+const site = await getSite();
+const projects = (await getProjects()).slice(0, site.homeProjectCount);
+const [latest] = await getPublications();
+---
+<Base>
+  <section class="page">
+    <div class="banner">
+      <div class="txt">
+        <p class="slogan">{site.slogan}</p>
+        <h1>{site.headline}</h1>
+        <p>{site.intro}</p>
+        <div class="btns"><a class="btn solid" href="/projects/">Current projects</a><a class="btn" href="/join/">Join the lab</a></div>
+      </div>
+      <NetworkBanner />
+    </div>
+
+    {projects.length > 0 && (
+      <div>
+        <h2 class="sec">Active Research Projects <a href="/projects/">Full list →</a></h2>
+        <div class="grid" style="margin-top:24px">
+          {projects.map((p) => <ProjectCard project={p} />)}
+        </div>
+      </div>
+    )}
+
+    {latest && (
+      <div>
+        <h2 class="sec">Recent Publication <a href="/publications/">All publications →</a></h2>
+        <ul class="publist"><PubItem pub={latest} /></ul>
+      </div>
+    )}
+  </section>
+</Base>
+
+<script>
+  /* Old links from the single-page version used #hash routes (e.g. /#people). */
+  const map: Record<string, string> = { about: "/about/", projects: "/projects/", works: "/publications/", posters: "/posters/", people: "/people/", join: "/join/" };
+  const h = location.hash.slice(1);
+  if (map[h]) location.replace(map[h]);
+</script>

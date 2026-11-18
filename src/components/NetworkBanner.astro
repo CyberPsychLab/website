@@ -1,0 +1,41 @@
+---
+/* Decorative animated network of connected nodes for the home banner. */
+---
+<canvas id="net" aria-hidden="true"></canvas>
+
+<script>
+  const c = document.getElementById("net") as HTMLCanvasElement | null;
+  const ctx = c?.getContext("2d");
+  if (c && ctx) {
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    type Node = { x: number; y: number; vx: number; vy: number };
+    let W = 0, H = 0, nodes: Node[] = [], running = false, raf = 0;
+    const size = () => {
+      const r = c.getBoundingClientRect();
+      if (!r.width || !r.height) return false;
+      const d = devicePixelRatio || 1, oldW = W, oldH = H;
+      W = r.width; H = r.height; c.width = W * d; c.height = H * d; ctx.setTransform(d, 0, 0, d, 0, 0);
+      if (!nodes.length) nodes = Array.from({ length: 34 }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 }));
+      else if (oldW && oldH) nodes.forEach((n) => { n.x *= W / oldW; n.y *= H / oldH; });
+      return true;
+    };
+    const draw = () => {
+      const accent = getComputedStyle(document.documentElement).getPropertyValue("--cu-light").trim() || "#b9d9eb";
+      ctx.clearRect(0, 0, W, H);
+      if (!reduce) nodes.forEach((n) => { n.x += n.vx; n.y += n.vy; if (n.x < 0 || n.x > W) n.vx *= -1; if (n.y < 0 || n.y > H) n.vy *= -1; });
+      ctx.strokeStyle = accent; ctx.fillStyle = accent;
+      for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j], dist = Math.hypot(a.x - b.x, a.y - b.y);
+        if (dist < 110) { ctx.globalAlpha = (1 - dist / 110) * 0.7; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
+      }
+      ctx.globalAlpha = 1;
+      nodes.forEach((n) => { ctx.beginPath(); ctx.arc(n.x, n.y, 2.6, 0, 7); ctx.fill(); });
+      if (running && !reduce) raf = requestAnimationFrame(draw);
+    };
+    const start = () => { if (running || !size()) return; running = true; draw(); };
+    const stop = () => { running = false; cancelAnimationFrame(raf); };
+    addEventListener("resize", () => { if (running) { size(); if (reduce) draw(); } });
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+    start();
+  }
+</script>

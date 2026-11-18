@@ -1,0 +1,10 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+interface Props { photo?: ImageMetadata; initials?: string; name: string; size: number }
+const { photo, initials, name, size } = Astro.props;
+const fallback = initials ?? name.split(/\s+/).map((w) => w[0]).filter((c) => /[A-Za-z]/.test(c ?? "")).slice(0, 2).join("");
+---
+{photo
+  ? <Image class="photo" src={photo} alt={`Photo of ${name}`} width={size * 2} height={size * 2} style="object-fit:cover;width:100%;height:auto" />
+  : <div class="photo" aria-hidden="true">{fallback}</div>}

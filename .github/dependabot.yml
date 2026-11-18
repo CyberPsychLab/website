@@ -1,0 +1,13 @@
+# Opens pull requests for dependency updates. Review and merge them like any other PR.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly }
+    cooldown: { default-days: 7 }
+    groups:
+      astro:
+        patterns: ["astro", "@astrojs/*", "sharp"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }

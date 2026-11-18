@@ -1,0 +1,99 @@
+---
+import Base from "../layouts/Base.astro";
+import Avatar from "../components/Avatar.astro";
+import { render } from "astro:content";
+import { getPeople, getProjects } from "../lib/content";
+
+const [leaders, ras, alumni, projects] = await Promise.all([
+  getPeople("leadership"), getPeople("ra"), getPeople("alumni"), getProjects(),
+]);
+const projName = (id?: string) => projects.find((p) => p.id === id)?.data.title ?? id ?? "";
+const withBio = (list: typeof leaders) => Promise.all(list.map(async (p) => ({ p, Bio: (await render(p)).Content })));
+const leaderBios = await withBio(leaders);
+const raBios = await withBio(ras);
+const LI = "M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z";
+---
+<Base title="People" description="The CyberPsych Lab team: leadership, research assistants, and alumni.">
+  <section class="page">
+    <div class="pagehead"><span class="eyebrow">People</span><h1>Our Team</h1></div>
+
+    <div>
+      <h2 class="sec">Leadership</h2>
+      <div style="display:grid;gap:36px;margin-top:24px">
+        {leaderBios.map(({ p: { data: l }, Bio }) => (
+          <article class="leader">
+            <Avatar photo={l.photo} initials={l.initials} name={l.name} size={180} />
+            <div>
+              <h3>{l.name}</h3>
+              {l.role && <div class="role">{l.role}</div>}
+              <div class="bio"><Bio /></div>
+              {l.email && <p style="margin-top:10px"><a href={`mailto:${l.email}`} style="font-family:var(--mono);font-size:14px">Email: {l.email}</a></p>}
+              {l.website && <p><a href={l.website} target="_blank" rel="noopener">Website</a></p>}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+
+    <div id="ras">
+      <h2 class="sec">Research Assistants
+        <span class="filters"><label for="ra-filter">Project</label>
+          <select id="ra-filter">
+            <option value="">All projects</option>
+            {projects.map((p) => <option value={p.id}>{p.data.title}</option>)}
+          </select>
+        </span>
+      </h2>
+      <div class="grid" style="margin-top:24px">
+        {raBios.map(({ p: { data: r }, Bio }) => (
+          <article class="ra" data-project={r.project?.id}>
+            <Avatar photo={r.photo} initials={r.initials} name={r.name} size={96} />
+            <div style="min-width:0">
+              <h3>{r.name}</h3>
+              <span class="proj-tag">{projName(r.project?.id)}</span>
+              <div class="bio" style="font-size:15px"><Bio /></div>
+              {r.linkedin && (
+                <a class="li" href={r.linkedin} target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d={LI} /></svg> LinkedIn
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+      <p class="empty" id="ra-empty" hidden={ras.length > 0}>No research assistants listed {ras.length ? "on this project " : ""}yet.</p>
+    </div>
+
+    {alumni.length > 0 && (
+      <div>
+        <h2 class="sec">Lab Alumni</h2>
+        <div class="alumni" style="margin-top:16px">
+          {alumni.map(({ data: a }) => <div><strong>{a.name}</strong>{a.detail && <small>{a.detail}</small>}</div>)}
+        </div>
+      </div>
+    )}
+  </section>
+</Base>
+
+<script>
+  const sel = document.getElementById("ra-filter") as HTMLSelectElement | null;
+  const empty = document.getElementById("ra-empty");
+  const cards = document.querySelectorAll<HTMLElement>(".ra[data-project]");
+  const apply = () => {
+    if (!sel || !cards.length) return;
+    let shown = 0;
+    cards.forEach((c) => { c.hidden = !!sel.value && c.dataset.project !== sel.value; if (!c.hidden) shown++; });
+    if (empty) { empty.textContent = "No research assistants listed on this project yet."; empty.hidden = shown > 0; }
+  };
+  if (sel) {
+    const want = new URLSearchParams(location.search).get("project");
+    if (want && [...sel.options].some((o) => o.value === want)) sel.value = want;
+    sel.addEventListener("change", () => {
+      const u = new URL(location.href);
+      sel.value ? u.searchParams.set("project", sel.value) : u.searchParams.delete("project");
+      history.replaceState(null, "", u);
+      apply();
+    });
+    apply();
+  }
+</script>

@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from "astro:content";
+interface Props { project: CollectionEntry<"projects"> }
+const { project } = Astro.props;
+const p = project.data;
+---
+<article class="proj">
+  {(p.status || p.methods.length > 0) && (
+    <div class="meta">
+      {p.status && <span class="chip status">{p.status}</span>}
+      {p.methods.map((m) => <span class="chip">{m}</span>)}
+    </div>
+  )}
+  <h3>{p.title}</h3>
+  <div class="tlabel">Topics of interest</div>
+  {p.topics.length > 0
+    ? <ul class="topics">{p.topics.map((t) => <li>{t}</li>)}</ul>
+    : <p>Topics coming soon.</p>}
+  {p.surveys.length > 0 && (
+    <a class="btn solid survey" style="justify-self:start" href={p.surveys[0]}
+       data-project={project.id} data-surveys={JSON.stringify(p.surveys)}
+       target="_blank" rel="noopener">Take the survey</a>
+  )}
+  <a href={`/people/?project=${project.id}#ras`} style="font-weight:600;font-size:14px">Team on this project →</a>
+</article>
+
+<script>
+  /* A group with several survey links (alternate conditions) sends each visitor to one
+     at random; the same browser keeps getting the same one. */
+  document.querySelectorAll<HTMLAnchorElement>("a.survey[data-surveys]").forEach((a) => {
+    const links: string[] = JSON.parse(a.dataset.surveys || "[]");
+    if (links.length < 2) return;
+    const key = `cp-survey-${a.dataset.project}-${links.length}`;
+    let i = NaN;
+    try { i = parseInt(localStorage.getItem(key) ?? "", 10); } catch {}
+    if (!(i >= 0 && i < links.length)) {
+      i = Math.floor(Math.random() * links.length);
+      try { localStorage.setItem(key, String(i)); } catch {}
+    }
+    a.href = links[i];
+  });
+</script>

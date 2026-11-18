@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import { Image } from "astro:assets";
+import { getPosters } from "../lib/content";
+const posters = await getPosters();
+---
+<Base title="Posters" description="Posters presented by CyberPsych Lab members at conferences and research symposia.">
+  <section class="page">
+    <div class="pagehead"><span class="eyebrow">Conferences</span><h1>Posters</h1><p>Posters presented by lab members at conferences and research symposia.</p></div>
+    {posters.length > 0 ? (
+      <div class="grid">
+        {posters.map(({ data: p }) => (
+          <article class="poster">
+            <div class="thumb" style={p.image ? "padding:0" : undefined}>
+              {p.image
+                ? <Image src={p.image} alt={`Poster: ${p.title}`} width={640} style="width:100%;height:100%;object-fit:cover" />
+                : <span>{p.event}<br>{p.date}</span>}
+            </div>
+            <h3>{p.file ? <a href={p.file} target="_blank" rel="noopener" style="color:inherit">{p.title}</a> : p.title}</h3>
+            <p>{p.authors}{p.image && ` · ${p.event}, ${p.date}`}</p>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <p class="empty">Posters will be listed here soon.</p>
+    )}
+  </section>
+</Base>

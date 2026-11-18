@@ -1,0 +1,14 @@
+---
+import Base from "../layouts/Base.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { getProjects } from "../lib/content";
+const projects = await getProjects();
+---
+<Base title="Current Projects" description="Ongoing research groups in the CyberPsych Lab at Columbia University.">
+  <section class="page">
+    <div class="pagehead"><span class="eyebrow">Research</span><h1>Current Projects</h1><p>Ongoing studies in the lab. Each research assistant's card on the People page links to the project they work on.</p></div>
+    <div class="grid">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
+  </section>
+</Base>
