@@ -35,9 +35,23 @@ npm run preview   # serve the built dist/ folder
    - Require a pull request before merging, with 1 approval and review from Code Owners
    - Require the status checks **Lint content** and **Build and check content** to pass
    - Block force pushes and deletions
-5. **Editors:** add lab members to the org with *Read* access to the repo (or *Triage*). They can
-   still propose changes: GitHub forks the repo or makes a branch for them and opens a PR. Give
-   *Write* access to people who should be able to create branches directly (smoother for AI tools).
+5. **People and teams:**
+
+   | Team | Who | Repo access | Can approve | Extra |
+   |---|---|---|---|---|
+   | `@CyberPsychLab/lab-leads` | PI / lab leadership | Write | content PRs | Team **maintainer** of `editors`, so they can add and remove editors |
+   | `@CyberPsychLab/editors` | lab members who edit content | Write | content PRs | — |
+   | `@AMoo-Miki` (org owner) | site maintainer | Admin | everything | Can merge own PRs (ruleset bypass, PR-only) |
+
+   - Approval rules live in `.github/CODEOWNERS`. `src/content/` and `public/files/` can be approved
+     by either team. Everything else (code, config, workflows, docs) needs the maintainer.
+   - Someone can't approve their own PR, so an editor's change needs another editor, a lab lead, or
+     the maintainer.
+   - Write access lets editors push branches (needed by AI tools), but the `Protect main` ruleset
+     still forces every change through a reviewed PR with passing checks.
+   - **Adding an editor:** the person needs a GitHub account and must be an org member. An owner
+     invites them to the org (People → Invite member); a lab lead or owner then adds them to `editors`.
+   - Org member privileges: members can't create repositories or teams.
 6. **Dependabot** is configured in `.github/dependabot.yml`. It opens weekly PRs for npm updates
    (grouped, after a 7-day cooldown) and monthly PRs for GitHub Actions.
 
